@@ -41,9 +41,12 @@ argument parser is coming soon..
 ### Reference
 
 - [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576)
+
+### Future work
+
+try to find a way to generalize the map operation from one input to stylized version by using deep neural network instead of the plain parameters from image pixels.
+
 - [Image Style Transfer Using Convolutional Neural Networks](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf)
 - [Instance Normalization, The Missing Ingredient for Fast Stylization](https://arxiv.org/pdf/1607.08022)
 - [Meta Networks for Neural Style Transfer](http://openaccess.thecvf.com/content_cvpr_2018/papers/Shen_Neural_Style_Transfer_CVPR_2018_paper.pdf)
 - [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155)
-
-
