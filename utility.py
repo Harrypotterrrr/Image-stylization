@@ -12,6 +12,17 @@ import matplotlib.pyplot as plt
 norm_mean = [0.485, 0.456, 0.406] # convention
 norm_std = [0.229, 0.224, 0.225]
 
+# reference pytorch example: https://github.com/pytorch/examples/blob/0.4/fast_neural_style/neural_style/utils.py#L21-L26
+def gram_matrix(x):
+    """
+    :param x: torch tensor
+    :return: the gram matrix of x
+    """
+    (b, c, h, w) = x.size()
+    phi = x.view(b, c, h * w)
+    phi_T = phi.transpose(1, 2)
+    return phi.bmm(phi_T) / (c * h * w) # use batch matrix(vector) inner product
+
 class ImageProcess():
 
     @staticmethod
@@ -30,6 +41,25 @@ class ImageProcess():
         return image[0]
 
     @staticmethod
+    def common_process(h=None, w=None):
+        """
+        process an image for common situation
+        :param h: height
+        :param w: width
+        :return: transformation function
+        """
+        norm = transforms.Normalize(mean=norm_mean, std=norm_std)
+
+        common_transforms = transforms.Compose([
+            transforms.Resize((h, w)),
+            transforms.CenterCrop((h, w)),
+            transforms.ToTensor(), # squash PIL image in range[0,255] of shape(H*W*C) to a FloatTensor in range[0,1] of shape(C*H*W)
+            norm,
+        ])
+
+        return common_transforms
+
+    @staticmethod
     def preprocess_image(img, h = None, w = None):
         """
         preprocess an image
@@ -41,12 +71,7 @@ class ImageProcess():
         norm = transforms.Normalize(mean=norm_mean, std=norm_std)
 
         if h and w:
-            t = transforms.Compose([
-                transforms.Resize((h, w)),
-                transforms.CenterCrop((h, w)),
-                transforms.ToTensor(), # squash PIL image in range[0,255] of shape(H*W*C) to a FloatTensor in range[0,1] of shape(C*H*W)
-                norm,
-            ])
+            t = ImageProcess.common_process(h, w)
         else:
             t = transforms.Compose([
                 transforms.ToTensor(),
@@ -73,7 +98,6 @@ class ImageProcess():
         :return: NULL
         """
         image = ImageProcess.torchTensor2Image(tensor)
-        print(image.shape)
         plt.axis('off')
         plt.imshow(image)
         plt.show()
