@@ -1,18 +1,20 @@
 import torch
 import torchvision
-from torchvision import transforms
 
 from utility import ImageProcess
+from common import *
 
-batch_size = 4
-height = 256
-width = 256
 
 # load transformation function
-data_transform = ImageProcess.common_process(height, width)
+data_transform = ImageProcess.common_transforms(uniform_h, uniform_w)
 
 
 dataset = torchvision.datasets.ImageFolder('/home/jiahl/coco/', transform=data_transform)
+# dataset = torch.utils.data.Subset(dataset, [i for i in range(100)])
 data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-print(dataset)
+if verbose_print:
+    print("dataset description:\n", dataset)
+
+if __name__ == "__main__":
+    print(type(dataset))

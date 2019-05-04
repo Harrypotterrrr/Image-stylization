@@ -23,6 +23,7 @@ def ConvLayer(in_channels, out_channels, kernel_size=3, stride=1, upsample=None,
     layers = []
     if upsample: # TODO
         layers.append(nn.Upsample(mode='nearest', scale_factor=upsample))
+        # layers.append(F.interpolate())
     layers.append(nn.ReflectionPad2d(kernel_size // 2))
     layers.append(nn.Conv2d(in_channels, out_channels, kernel_size, stride))
     if instance_norm:
@@ -84,13 +85,14 @@ class TransformNet(nn.Module):
             *ConvLayer(base, base*2, kernel_size=3, stride=2),
             *ConvLayer(base*2, base*4, kernel_size=3, stride=2),
         )
-        self.residuals = nn.Sequential([
+        self.residuals = nn.Sequential(
+            *[ResidualBlock(base*4),
             ResidualBlock(base*4),
             ResidualBlock(base*4),
             ResidualBlock(base*4),
-            ResidualBlock(base*4),
-            ResidualBlock(base*4),
-        ])
+            ResidualBlock(base*4)]
+        )
+        # self.residuals = nn.Sequential(*[ResidualBlock(base * 4) for i in range(5)])
 
         self.upsampling = nn.Sequential(
             *ConvLayer(base*4, base*2, kernel_size=3, upsample=2),

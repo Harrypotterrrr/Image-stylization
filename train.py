@@ -5,7 +5,7 @@ import torch.optim as optim
 import torchvision.models as tv_models
 
 import model
-import utility
+from utility import gram_matrix, ImageProcess
 
 debug = True
 iter_times = 1000
@@ -17,28 +17,16 @@ content_img_path = "./image/content_img.jpg"
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-# reference pytorch example: https://github.com/pytorch/examples/blob/0.4/fast_neural_style/neural_style/utils.py#L21-L26
-def gram_matrix(x):
-    """
-    :param x: torch tensor
-    :return: the gram matrix of x
-    """
-    (b, c, h, w) = x.size()
-    phi = x.view(b, c, h * w)
-    phi_T = phi.transpose(1, 2)
-    return phi.bmm(phi_T) / (c * h * w) # use batch matrix(vector) inner product
-
-
 # load image to torchTensor
-style_img = utility.ImageProcess.read_image(style_img_path).to(device)
+style_img = ImageProcess.read_image(style_img_path).to(device)
 print("style image shape:", style_img.shape)
 
-content_img = utility.ImageProcess.read_image(content_img_path).to(device)
+content_img = ImageProcess.read_image(content_img_path).to(device)
 print("content image shape:", content_img.shape)
 
 # paint images
-utility.ImageProcess.paint_image(style_img,"style_image")
-utility.ImageProcess.paint_image(content_img,"content_image")
+ImageProcess.paint_image(style_img,"style_image")
+ImageProcess.paint_image(content_img,"content_image")
 
 # build feature model
 vgg16 = tv_models.vgg16(pretrained=True)
@@ -93,7 +81,7 @@ while it[0] < iter_times:
         if it[0] % 20 == 0:
             print("Step %d: style_loss: %.5f content_loss: %.5f" % (it[0], style_loss, content_loss))
         if it[0] % 100 == 0:
-            utility.ImageProcess.paint_image(output_img, title='Output Image')
+            ImageProcess.paint_image(output_img, title='Output Image')
 
         # calculate gradient through backward
         loss.backward()
@@ -104,5 +92,5 @@ while it[0] < iter_times:
     # LBFGS optimizer to update parameters needs a closure that reevaluates the model and returns the loss
     optimizer.step(closure)
 
-utility.ImageProcess.paint_image(output_img, title='Output Image')
-utility.ImageProcess.save_image(output_img, output_img_path)
+ImageProcess.paint_image(output_img, title='Output Image')
+ImageProcess.save_image(output_img, output_img_path)
