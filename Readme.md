@@ -75,6 +75,14 @@ Different with the first trial, the generation of this method is based on the tr
 
 Further more, total variation loss is used to smooth the final image.
 
+### Training time
+
+Training for 1 epoch of 32000 images in batch size of 4 costs around 2 hours and 40 minutes on one K80(12GB) GPU.
+
+### Resource
+
+`state_dict`(weights) of the model can be fetched from [My Google drive](https://drive.google.com/file/d/1Ciw3eqa16LCOLlpdDeO4hwLdbfsxnOn-/view?usp=sharing)
+
 ### Result
 
 ![](./image/v2_final0.jpg)
