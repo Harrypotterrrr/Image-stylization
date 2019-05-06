@@ -12,7 +12,7 @@ iter_times = 1000
 uniform_h = 200
 uniform_w = 200
 output_img_path = "./image/output_img.jpg"
-style_img_path = "./image/style_img.jpg"
+style_img_path = "./image/style_img_v1.jpg"
 content_img_path = "./image/content_img.jpg"
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -51,12 +51,21 @@ if debug:
     print([i.shape for i in style_gram])
 
 # the stage of train the model
-## get the copy of input image as input and set its parameters able to be trained
-output_img = content_img.clone().requires_grad_(True)
+initial_white_noise = True
+if initial_white_noise:
+    # start with whiting noise
+    output_img = torch.randn(content_img.size()).to(device)
+    output_img.requires_grad_(True)
+    style_weight = 1e5
+
+else:
+    ## get the copy of input image as input and set its parameters able to be trained
+    output_img = content_img.clone().requires_grad_(True)
+    style_weight = 1e7
+
 optimizer = optim.LBFGS([output_img])
 
 ## set hyperparameter
-style_weight = 1e7
 content_weight = 0.5
 
 ## build an list item to be a counter of the closure
