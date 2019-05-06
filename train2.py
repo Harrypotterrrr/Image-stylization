@@ -44,7 +44,11 @@ if verbose_print:
 # instancialize the transformNet
 transform_net = TransformNet(32).to(device)
 
+# initilize the optimizer
 optimizer = optim.Adam(transform_net.parameters(), lr=learning_rate)
+# learning rate scheduler to adjust training
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.5)
+
 transform_net.train() ## Sets the module parameter in training mode.
 
 # try to use multi-GPUs
@@ -58,12 +62,13 @@ transform_net.train() ## Sets the module parameter in training mode.
 for epoch in range(iter_times):
     print("Epoch %d" % epoch)
 
-    with tqdm(enumerate(data_loader), total=len(data_loader), ncols=40) as pbar:
+    with tqdm(enumerate(data_loader), total=dataset_size, ncols=40) as pbar: # len(data_loader)
         for batch, (content_imgs, _) in pbar:
 
-            # if batch > 100:
-            #     break
-
+            if batch > dataset_size:
+                break
+            
+            scheduler.step()
             optimizer.zero_grad()
 
             content_imgs = content_imgs.to(device)
@@ -116,10 +121,10 @@ for epoch in range(iter_times):
 
             description = "\nStep %d: style_loss: %.5f content_loss: %.5f totalVariation_loss: %.5f" % (batch, style_weight * style_loss, content_weight * content_loss, totalVariation_weight * totalVariation_loss)
             if batch % verbose_batch == 0:
-                print(description)
+                # print(description)
                 ImageProcess.save_paint_plot(style_img, content_imgs, output_imgs, "%s%d.jpg" % (output_img_path, batch))
 
-            # pbar.set_description(description) # there is sth wrong with Pycharm interactive terminal
+            pbar.set_description(description) # there is sth wrong with Pycharm interactive terminal
 
 # save weights of the model
 torch.save(transform_net.state_dict(), model_save_path)
