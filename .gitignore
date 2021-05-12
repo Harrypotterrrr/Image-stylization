@@ -2,3 +2,4 @@ __pycache__/
 image/output/
 *.log
 *.pth
+CIFAR10/

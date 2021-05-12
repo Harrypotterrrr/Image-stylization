@@ -1,6 +1,6 @@
 # path setting
 output_img_path = "./image/output/"
-style_img_path = "./image/style_img.jpg"
+style_img_path = "./image/style_img_v1.jpg"
 model_save_path = "./model.pth"
 
 # verbose setting
@@ -17,7 +17,7 @@ uniform_w = 256
 
 # hyperparmaeter setting
 iter_times = 1
-dataset_size = 8000
+dataset_size = 4000
 batch_size = 4
 
 style_weight = 1e5
